@@ -21,16 +21,17 @@ const ourRequest = function(requestData) {
 });
 }
 
+// writes requested data to a local file
 const writeToPath = function(data) {
-  fs.writeFile(localPath, data, (error) => {
+  fs.writeFile(localPath, data, error => {
     if (error) {
       console.log('Oh no! Something went wrong writing to local file!\n' + error)
     } else {
       console.log(`Downloaded and saved ${fs.statSync(localPath).size} bytes to ${localPath}`)
     }
-
   })
 }
 
+// call our HTTP request
 ourRequest(writeToPath);
 
