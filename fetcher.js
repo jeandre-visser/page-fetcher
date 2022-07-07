@@ -2,22 +2,35 @@ const request = require('request');
 const fs = require('fs');
 
 // the two line arguments: URL, local file path
-let requestedUrl, local;
+let requestedUrl, localPath;
 
 // what we type into node
 if (process.argv[2] && process.argv[3]) {
   requestedUrl = process.argv[2];
-  local = process.argv[3];
+  localPath = process.argv[3];
 }
 
-const ourRequest = function(data) {
+// our request function
+const ourRequest = function(requestData) {
   request(requestedUrl, (error, response, body) => {
-  if (error) {
+  if (error || response.statusCode !== 200) {
     console.log("Uh oh! There is something wrong with that URL\n" + error);
   } else {
-    data(body);
+    requestData(body)
   }
 });
 }
 
+const writeToPath = function(data) {
+  fs.writeFile(localPath, data, (error) => {
+    if (error) {
+      console.log('Oh no! Something went wrong writing to local file!\n' + error)
+    } else {
+      console.log(`Downloaded and saved ${fs.statSync(localPath).size} bytes to ${localPath}`)
+    }
+
+  })
+}
+
+ourRequest(writeToPath);
 
